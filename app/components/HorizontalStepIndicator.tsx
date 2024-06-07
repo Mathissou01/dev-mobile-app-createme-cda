@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet, View, Text, ActivityIndicator } from "react-native";
 import StepIndicator from "./StepIndicator";
 import Swiper from "react-native-swiper";
 import Step from "../screens/Step";
@@ -9,9 +9,11 @@ import Step3 from "@/screens/Step3";
 import Step4 from "@/screens/Step4";
 import Step5 from "@/screens/Step5";
 import Step6 from "@/screens/Step6";
+import Step0 from "@/screens/Step0";
 
 const PAGES = [
   <Step />,
+  <Step0 />,
   <Step1 />,
   <Step2 />,
   <Step3 />,
@@ -25,10 +27,10 @@ const firstIndicatorStyles = {
   currentStepIndicatorSize: 40,
   separatorStrokeWidth: 3,
   currentStepStrokeWidth: 5,
-  separatorFinishedColor: "#4aae4f",
-  separatorUnFinishedColor: "#a4d4a5",
-  stepIndicatorFinishedColor: "#4aae4f",
-  stepIndicatorUnFinishedColor: "#a4d4a5",
+  separatorFinishedColor: "#EF233C",
+  separatorUnFinishedColor: "#CD0025",
+  stepIndicatorFinishedColor: "#EF233C",
+  stepIndicatorUnFinishedColor: "#FF5A7E",
   stepIndicatorCurrentColor: "#ffffff",
   stepIndicatorLabelFontSize: 15,
   currentStepIndicatorLabelFontSize: 15,
@@ -37,47 +39,7 @@ const firstIndicatorStyles = {
   stepIndicatorLabelUnFinishedColor: "rgba(255,255,255,0.5)",
   labelColor: "#666666",
   labelSize: 12,
-  currentStepLabelColor: "#4aae4f",
-};
-
-const getStepIndicatorIconConfig = ({
-  position,
-  stepStatus,
-}: {
-  position: number;
-  stepStatus: string;
-}) => {
-  const iconConfig = {
-    name: "feed",
-    color: stepStatus === "finished" ? "#ffffff" : "#fe7013",
-    size: 15,
-  };
-  switch (position) {
-    case 0: {
-      iconConfig.name = "shopping-cart";
-      break;
-    }
-    case 1: {
-      iconConfig.name = "location-on";
-      break;
-    }
-    case 2: {
-      iconConfig.name = "assessment";
-      break;
-    }
-    case 3: {
-      iconConfig.name = "payment";
-      break;
-    }
-    case 4: {
-      iconConfig.name = "track-changes";
-      break;
-    }
-    default: {
-      break;
-    }
-  }
-  return iconConfig;
+  currentStepLabelColor: "#EF233C",
 };
 
 export default function App() {
@@ -133,8 +95,6 @@ export default function App() {
             "Etape 6",
             "Etape 7",
             "Etape 8",
-            "Etape 9",
-            "Etape 10",
           ]}
           renderLabel={renderLabel}
           onPress={onStepPress}
@@ -146,9 +106,12 @@ export default function App() {
         index={currentPage}
         autoplay={false}
         showsButtons
+        nextButton={<Text style={styles.buttonText}>›</Text>}
+        prevButton={<Text style={styles.buttonText}>‹</Text>}
         onIndexChanged={(page) => {
           setCurrentPage(page);
         }}
+        loadMinimalLoader
       >
         {PAGES.map((page) => renderViewPagerPage(page))}
       </Swiper>
@@ -176,6 +139,11 @@ const styles = StyleSheet.create({
     fontSize: 12,
     textAlign: "center",
     fontWeight: "500",
-    color: "#4aae4f",
+    color: "#EF233C.",
+  },
+  buttonText: {
+    color: "#ff0000",
+    fontSize: 60,
+    fontWeight: "bold",
   },
 });

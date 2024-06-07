@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from "react";
 import { GLView } from "expo-gl";
-import { Renderer, TextureLoader } from "expo-three";
+import { ExpoWebGLRenderingContext } from "expo-gl";
+import { Renderer } from "expo-three";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   AmbientLight,
   Box3,
+  Object3D,
   PerspectiveCamera,
   PointLight,
   Scene,
@@ -13,17 +15,28 @@ import {
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Asset } from "expo-asset";
+import ModalStep from "@/components/ModalStep";
 
-export default function App() {
-  const timeoutRef = useRef();
-  const modelsRef = useRef([]); // Store models in a ref to persist across re-renders
+// Define types for Model and Scene
+type ModelType = Object3D & {
+  position: Vector3;
+  rotation: Vector3;
+  scale: Vector3;
+};
+
+type SceneType = Scene;
+
+export default function Step() {
+  const timeoutRef = useRef<number>();
+  const modelsRef = useRef<ModelType[]>([]); // Store models in a ref to persist across re-renders
 
   useEffect(() => {
     // Clear the animation loop when the component unmounts
     return () => clearTimeout(timeoutRef.current);
   }, []);
 
-  const animateModels = (models) => {
+  // Function to animate models by updating their Y position
+  const animateModels = (models: ModelType[]) => {
     const time = performance.now() * 0.005;
 
     models.forEach((model, index) => {
@@ -34,19 +47,20 @@ export default function App() {
     });
   };
 
+  // Function to load and spawn a model into the scene
   const spawnModel = (
-    scene,
-    uri,
-    positionX,
-    positionY,
-    positionZ,
-    rotationX,
-    rotationY,
-    rotationZ,
-    scaleX,
-    scaleY,
-    scaleZ
-  ) => {
+    scene: SceneType,
+    uri: string,
+    positionX: number,
+    positionY: number,
+    positionZ: number,
+    rotationX: number,
+    rotationY: number,
+    rotationZ: number,
+    scaleX: number,
+    scaleY: number,
+    scaleZ: number
+  ): Promise<ModelType> => {
     return new Promise((resolve, reject) => {
       const asset = Asset.fromModule(uri);
 
@@ -56,8 +70,8 @@ export default function App() {
           const loader = new GLTFLoader();
           loader.load(
             asset.uri,
-            function (gltf) {
-              const model = gltf.scene;
+            (gltf) => {
+              const model = gltf.scene as ModelType;
               model.position.set(positionX, positionY, positionZ);
               model.rotation.set(rotationX, rotationY, rotationZ);
               model.scale.set(scaleX, scaleY, scaleZ);
@@ -80,17 +94,18 @@ export default function App() {
     });
   };
 
-  const spawnModels = async (scene) => {
-    const models = [];
+  // Function to spawn multiple models in the scene
+  const spawnModels = async (scene: SceneType) => {
+    const models: ModelType[] = [];
 
     const spawnModelHelper = async (
-      uri,
-      posX,
-      posY,
-      posZ,
-      rotX,
-      rotY,
-      rotZ
+      uri: string,
+      posX: number,
+      posY: number,
+      posZ: number,
+      rotX: number,
+      rotY: number,
+      rotZ: number
     ) => {
       try {
         const spawnedModel = await spawnModel(
@@ -153,9 +168,10 @@ export default function App() {
     return models;
   };
 
-  const initializeScene = async (gl) => {
+  // Function to initialize the scene and start rendering
+  const initializeScene = async (gl: ExpoWebGLRenderingContext) => {
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
-    const sceneColor = 0xffddff;
+    const sceneColor = 0xe35a5a;
 
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
@@ -176,19 +192,20 @@ export default function App() {
     scene.add(spotLight);
 
     const camera = new PerspectiveCamera(80, width / height, 0.1, 1000); // Adjusted FOV
-    // Calculate bounding box
-    const boundingBox = new Box3().setFromObject(scene);
 
-    // Calculate center of bounding box
+    // Calculate bounding box and center of the scene
+    const boundingBox = new Box3().setFromObject(scene);
     const center = new Vector3();
     boundingBox.getCenter(center);
 
     // Set camera position to center and adjust it to be further from the scene
-    camera.position.set(center.x + 4, center.y + 4, center.z + 7);
+    camera.position.set(center.x + 5, center.y + 4, center.z + 5);
     camera.lookAt(center);
 
+    // Spawn initial models
     const models = await spawnModels(scene);
 
+    // Function to render the scene
     const render = () => {
       animateModels(models);
 
@@ -205,15 +222,17 @@ export default function App() {
     // Start the initial animation loop
     render();
 
+    // Cleanup function to clear animation loop and interval when the component unmounts
     return () => {
-      // Cleanup: Clear the animation loop and interval when the component unmounts
       clearInterval(intervalId);
       clearTimeout(timeoutRef.current);
     };
   };
 
+  // Render the GLView and ModalStep components
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <ModalStep message="Commencez par récupérer les quatre planches de base fournies dans votre commande. Disposez-les de manière à ce qu'elles soient prêtes à être collées ensemble." />
       <GLView style={{ flex: 1 }} onContextCreate={initializeScene} />
     </GestureHandlerRootView>
   );
