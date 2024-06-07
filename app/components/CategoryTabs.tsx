@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 
-const categories = ["Tous","Saisons","Mes meubles"];
+const categories = ["Tous", "Saisons", "Mes meubles"];
 
 const CategoryTabs = ({ selectedCategory, onSelect }) => {
   return (
@@ -25,6 +25,7 @@ export default CategoryTabs;
 
 const styles = StyleSheet.create({
   container: {
+    backgroundColor: "transparent",
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -32,11 +33,13 @@ const styles = StyleSheet.create({
   categoryContainer: {
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: "transparent",
     marginRight: 40,
   },
   category: {
     fontSize: 18,
     fontWeight: "500",
+    backgroundColor: "transparent",
     color: "black",
   },
   selectedIndicator: {
