@@ -1,31 +1,23 @@
-/* eslint-disable react-native/no-inline-styles */
 import * as React from "react";
 import { StyleSheet, View, Text } from "react-native";
 import StepIndicator from "./StepIndicator";
 import Swiper from "react-native-swiper";
-import { MaterialIcons } from "@expo/vector-icons";
-import Search from "../screens/Search";
-import Search2 from "../screens/Search2";
-import Search3 from "../screens/Search3";
-import Search4 from "../screens/Search4";
-import Search5 from "../screens/Search5";
-import Search6 from "../screens/Search6";
-import Search7 from "../screens/Search7";
-import Search8 from "../screens/Search8";
-import Search9 from "../screens/Search9";
-import Search10 from "../screens/Search10";
+import Step from "../screens/Step";
+import Step1 from "@/screens/Step1";
+import Step2 from "@/screens/Step2";
+import Step3 from "@/screens/Step3";
+import Step4 from "@/screens/Step4";
+import Step5 from "@/screens/Step5";
+import Step6 from "@/screens/Step6";
 
 const PAGES = [
-  <Search />,
-  <Search2 />,
-  <Search3 />,
-  <Search4 />,
-  <Search5 />,
-  <Search6 />,
-  <Search7 />,
-  <Search8 />,
-  <Search9 />,
-  <Search10 />,
+  <Step />,
+  <Step1 />,
+  <Step2 />,
+  <Step3 />,
+  <Step4 />,
+  <Step5 />,
+  <Step6 />,
 ];
 
 const firstIndicatorStyles = {

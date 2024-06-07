@@ -1,11 +1,6 @@
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
 import { Renderer, TextureLoader } from "expo-three";
-import {
-  GestureHandlerRootView,
-  PinchGestureHandler,
-  RotationGestureHandler,
-  State,
-} from "react-native-gesture-handler";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as React from "react";
 import {
   AmbientLight,
@@ -21,7 +16,6 @@ import {
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Asset } from "expo-asset";
-import { Animated } from "react-native";
 
 // ... (imports and other code)
 
@@ -55,7 +49,7 @@ export default function App() {
         model = gltf.scene;
         model.position.set(positionX, postionY, positionZ);
         model.rotation.set(rotationX, rotationY, rotationZ);
-        model.scale.set(0.05, 0.05, 0.05);
+        model.scale.set(0.04, 0.04, 0.04);
         scene.add(model);
       },
       (xhr) => {
@@ -108,12 +102,12 @@ export default function App() {
 
           // Spawn multiple models
           const numModels = 1;
-          const models = [];
+          const models: undefined[] = [];
 
           for (let i = 0; i < numModels; i++) {
             const spawnedModel = await spawnModel(
               scene,
-              require("../../assets/base_planche.glb"),
+              require("../../assets/ensemblefinale.glb"),
               0,
               0,
               0,
