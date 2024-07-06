@@ -10,6 +10,7 @@ import Step4 from "@/screens/Step4";
 import Step5 from "@/screens/Step5";
 import Step6 from "@/screens/Step6";
 import Step0 from "@/screens/Step0";
+import { useState } from "react";
 
 const PAGES = [
   <Step />,
@@ -43,7 +44,7 @@ const firstIndicatorStyles = {
 };
 
 export default function App() {
-  const [currentPage, setCurrentPage] = React.useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
 
   const onStepPress = (position: number) => {
     setCurrentPage(position);

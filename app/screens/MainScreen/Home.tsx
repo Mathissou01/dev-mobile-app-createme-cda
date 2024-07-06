@@ -1,5 +1,10 @@
 import React, { useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
+import {
+  Dimensions,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   useGetProductsByCategoryNameQuery,
@@ -9,6 +14,7 @@ import Navbar from "@components/Navbar";
 import { View } from "@components/Themed";
 import CategoryTabs from "@components/CategoryTabs";
 import Offers from "@components/Offers";
+import InputTemplate from "@/components/FormTemplate/InputTemplate";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("Tous");
@@ -19,6 +25,16 @@ export default function Home() {
       ? useGetProductsQuery()
       : useGetProductsByCategoryNameQuery({ categorie_name: "Noel" });
 
+  const [searchValue, setSearchValue] = useState("");
+  const width = Dimensions.get("window").width;
+
+  // Filtrer et trier les produits
+  const filteredAndSortedData = data
+    ?.filter((product) =>
+      product.product_name.toLowerCase().includes(searchValue.toLowerCase())
+    )
+    .sort((a, b) => a.product_name.localeCompare(b.product_name));
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -28,6 +44,19 @@ export default function Home() {
         }
       >
         <Navbar title="Accueil" />
+        <View style={{ marginHorizontal: width * 0.04 }}>
+          <InputTemplate
+            value={searchValue}
+            placeholder="Rechercher..."
+            onChangeText={(text) => {
+              setSearchValue(text);
+            }}
+            secureTextEntry={false}
+            multiline={false}
+            hasToBeChecked={false}
+            searchInput={true}
+          />
+        </View>
         <View style={styles.categoriesContainer}>
           <CategoryTabs
             selectedCategory={selectedCategory}
@@ -37,7 +66,7 @@ export default function Home() {
           />
         </View>
         <View style={styles.offersContainer}>
-          <Offers items={data} />
+          <Offers items={filteredAndSortedData} />
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -58,5 +87,11 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     paddingBottom: 70,
   },
-  offersContainer: { backgroundColor: "transparent" },
+  offersContainer: {
+    backgroundColor: "transparent",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
 });

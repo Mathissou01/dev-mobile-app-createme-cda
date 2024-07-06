@@ -1,14 +1,10 @@
 import { ExpoWebGLRenderingContext, GLView } from "expo-gl";
-import { Renderer, TextureLoader } from "expo-three";
+import { Renderer } from "expo-three";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as React from "react";
 import {
   AmbientLight,
-  BoxGeometry,
   Fog,
-  GridHelper,
-  Mesh,
-  MeshStandardMaterial,
   PerspectiveCamera,
   PointLight,
   Scene,
@@ -16,62 +12,54 @@ import {
 } from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { Asset } from "expo-asset";
+import { useCallback, useEffect, useRef } from "react";
+import ModalStep from "@/components/ModalStep";
 
-// ... (imports and other code)
+export default function Step4() {
+  const requestId = useRef(null);
 
-export default function App() {
-  let timeout;
+  const spawnModel = useCallback(
+    async (scene, uri, position, rotation, scale = 0.04) => {
+      const asset = Asset.fromModule(uri);
+      await asset.downloadAsync();
 
-  React.useEffect(() => {
-    // Clear the animation loop when the component unmounts
-    return () => clearTimeout(timeout);
-  }, []);
+      const loader = new GLTFLoader();
+      loader.load(
+        asset.uri,
+        (gltf) => {
+          gltf.scene.traverse((child) => {
+            if (child.isMesh) {
+              // Créer un nouveau matériau avec couleur grise
+              const grayMaterial = new THREE.MeshStandardMaterial({
+                color: 0x808080, // Couleur grise
+              });
+              child.material = grayMaterial;
+            }
+          });
 
-  const spawnModel = async (
-    scene,
-    uri,
-    positionX,
-    postionY,
-    positionZ,
-    rotationX,
-    rotationY,
-    rotationZ
-  ) => {
-    const asset = Asset.fromModule(uri);
-    await asset.downloadAsync();
+          gltf.scene.position.set(...position);
+          gltf.scene.rotation.set(...rotation);
+          gltf.scene.scale.set(scale, scale, scale);
 
-    let model;
+          scene.add(gltf.scene);
+        },
+        (xhr) => console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`),
+        (error) =>
+          console.error(`An error happened while loading ${asset.uri}`, error)
+      );
+    },
+    []
+  );
 
-    const loader = new GLTFLoader();
-    loader.load(
-      asset.uri,
-      function (gltf) {
-        model = gltf.scene;
-        model.position.set(positionX, postionY, positionZ);
-        model.rotation.set(rotationX, rotationY, rotationZ);
-        model.scale.set(0.04, 0.04, 0.04);
-        scene.add(model);
-      },
-      (xhr) => {
-        console.log(`${(xhr.loaded / xhr.total) * 100}% loaded`);
-      },
-      (error) => {
-        console.error("An error happened", error);
-      }
-    );
-
-    return model;
-  };
-  console.log("test");
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
+      <ModalStep message="Voila vos morceau de bois sont collés" />
       <GLView
         style={{ flex: 1 }}
         onContextCreate={async (gl: ExpoWebGLRenderingContext) => {
           const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
-          const sceneColor = 0x6ad6f0;
+          const sceneColor = 0xe35a5a;
 
-          // Create a WebGLRenderer without a DOM element
           const renderer = new Renderer({ gl });
           renderer.setSize(width, height);
           renderer.setClearColor(sceneColor);
@@ -81,10 +69,8 @@ export default function App() {
 
           const scene = new Scene();
           scene.fog = new Fog(sceneColor, 1, 10000);
-          scene.add(new GridHelper(10, 10));
 
-          const ambientLight = new AmbientLight(0x101010);
-          scene.add(ambientLight);
+          scene.add(new AmbientLight(0x101010));
 
           const pointLight = new PointLight(0xffffff, 2, 1000, 1);
           pointLight.position.set(0, 200, 200);
@@ -95,143 +81,71 @@ export default function App() {
           spotLight.lookAt(scene.position);
           scene.add(spotLight);
 
-          // Load and add a texture
-          const cube = new IconMesh();
-
           camera.lookAt(0, 0, 0);
 
-          // Spawn multiple models
-          const numModels = 1;
-          const models: undefined[] = [];
-
-          for (let i = 0; i < numModels; i++) {
-            const spawnedModel = await spawnModel(
+          await Promise.all([
+            spawnModel(
               scene,
               require("../../assets/cotbasporte.glb"),
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            );
-            models.push(spawnedModel);
-          }
-
-          for (let i = 0; i < numModels; i++) {
-            const spawnedModel = await spawnModel(
+              [0, 0, 0],
+              [0, 0, 0]
+            ),
+            spawnModel(
               scene,
               require("../../assets/cotporte.glb"),
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            );
-            models.push(spawnedModel);
-          }
-
-          for (let i = 0; i < numModels; i++) {
-            const spawnedModel = await spawnModel(
+              [0, 0, 0],
+              [0, 0, 0]
+            ),
+            spawnModel(
               scene,
               require("../../assets/glassdoor.glb"),
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            );
-            models.push(spawnedModel);
-          }
-
-          for (let i = 0; i < numModels; i++) {
-            const spawnedModel = await spawnModel(
+              [0, 0, 0],
+              [0, 0, 0]
+            ),
+            spawnModel(
               scene,
               require("../../assets/leftdoor.glb"),
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            );
-            models.push(spawnedModel);
-          }
-
-          for (let i = 0; i < numModels; i++) {
-            const spawnedModel = await spawnModel(
+              [0, 0, 0],
+              [0, 0, 0]
+            ),
+            spawnModel(
               scene,
               require("../../assets/bottomdoor.glb"),
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            );
-            models.push(spawnedModel);
-          }
-
-          for (let i = 0; i < numModels; i++) {
-            const spawnedModel = await spawnModel(
+              [0, 0, 0],
+              [0, 0, 0]
+            ),
+            spawnModel(
               scene,
               require("../../assets/poignee.glb"),
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            );
-            models.push(spawnedModel);
-          }
-
-          for (let i = 0; i < numModels; i++) {
-            const spawnedModel = await spawnModel(
+              [0, 0, 0],
+              [0, 0, 0]
+            ),
+            spawnModel(
               scene,
               require("../../assets/charniere.glb"),
-              0,
-              0,
-              0,
-              0,
-              0,
-              0
-            );
-            models.push(spawnedModel);
-          }
+              [0, 0, 0],
+              [0, 0, 0]
+            ),
+          ]);
 
-          function update() {
-            models.forEach((model) => {
-              if (model) {
-                model.scale.set(5000, 5000, 5000);
+          const update = () => {
+            scene.children.forEach((child) => {
+              if (child.isMesh) {
+                child.scale.set(5000, 5000, 5000);
               }
             });
-          }
+          };
 
-          // Setup an animation loop
           const render = () => {
-            timeout = requestAnimationFrame(render);
+            requestId.current = requestAnimationFrame(render);
             update();
             renderer.render(scene, camera);
             gl.endFrameEXP();
           };
+
           render();
         }}
       />
     </GestureHandlerRootView>
   );
-}
-
-class IconMesh extends Mesh {
-  constructor() {
-    super(
-      new BoxGeometry(1.0, 1.0, 1.0),
-      new MeshStandardMaterial({
-        map: new TextureLoader().load(require("../../assets/icon.png")),
-        // color: 0xff0000
-      })
-    );
-  }
 }
