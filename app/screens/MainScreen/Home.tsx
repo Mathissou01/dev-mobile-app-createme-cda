@@ -15,6 +15,7 @@ import { View } from "@components/Themed";
 import CategoryTabs from "@components/CategoryTabs";
 import Offers from "@components/Offers";
 import InputTemplate from "@/components/FormTemplate/InputTemplate";
+import OffersChristmas from "@/components/OffersChristmas";
 
 export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState("Tous");
@@ -66,7 +67,11 @@ export default function Home() {
           />
         </View>
         <View style={styles.offersContainer}>
-          <Offers items={filteredAndSortedData} />
+          {selectedCategory === "Mes meubles" ? (
+            <OffersChristmas />
+          ) : (
+            <Offers items={filteredAndSortedData} />
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>

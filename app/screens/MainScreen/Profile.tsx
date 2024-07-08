@@ -1,5 +1,3 @@
-// Profile.tsx
-
 import React from "react";
 import {
   View,
@@ -10,8 +8,24 @@ import {
   Image,
 } from "react-native";
 import Navbar from "@components/Navbar";
+import { useGetUserByIdQuery } from "@/services/users";
+import LoaderApi from "@/components/LoaderApi";
 
 const Profile = () => {
+  const { data, error, isLoading } = useGetUserByIdQuery({
+    userId: "google-oauth2|107441262419195766365",
+  });
+
+  // Handle error state if needed
+  if (isLoading || !data) {
+    return <LoaderApi visible={isLoading} />;
+  }
+
+  const handleEditProfile = () => {
+    console.log("Edit Profile button pressed");
+    // Add logic for editing profile
+  };
+
   return (
     <View style={styles.container}>
       <Navbar title="Profile" />
@@ -24,33 +38,21 @@ const Profile = () => {
           <Image
             source={require("../../../assets/dicaprio.jpg")} // Replace with your actual image source
             style={styles.profileImage}
-            resizeMode="center"
+            resizeMode="cover"
           />
         </View>
-        {/* Add your profile content here */}
+
         <View style={styles.contentContainer}>
-          <Text style={styles.profileTitle}>User Name</Text>
-          <Text style={styles.profileDetails}>Email: user@example.com</Text>
-          <Text style={styles.profileDetails}>Phone: +1234567890</Text>
-          {/* Add more profile details as needed */}
-        </View>
-        <View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleEditProfile()}
-          >
-            <Text style={styles.buttonText}>Edit Profile</Text>
-          </TouchableOpacity>
+          <Text style={styles.profileTitle}>Identité</Text>
+          <Text style={styles.profileDetails}>{data[0]?.userName}</Text>
         </View>
       </ScrollView>
-      {/* Move the button outsideP ScrollView */}
+
+      <TouchableOpacity style={styles.button} onPress={handleEditProfile}>
+        <Text style={styles.buttonText}>Edit Profile</Text>
+      </TouchableOpacity>
     </View>
   );
-};
-
-const handleEditProfile = () => {
-  // Add your logic for handling the "Edit Profile" button press
-  console.log("Edit Profile button pressed");
 };
 
 const styles = StyleSheet.create({
@@ -89,18 +91,15 @@ const styles = StyleSheet.create({
     color: "#3F3F3F",
     marginBottom: 10,
   },
-  buttonContainer: {
-    marginHorizontal: 25,
-    marginVertical: 15,
-  },
   button: {
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "black",
     paddingVertical: 10,
-    paddingHorizontal: 10,
-    marginHorizontal: 20,
+    paddingHorizontal: 20,
+    marginHorizontal: 25,
     borderRadius: 8,
+    marginTop: 20,
   },
   buttonText: {
     color: "white",

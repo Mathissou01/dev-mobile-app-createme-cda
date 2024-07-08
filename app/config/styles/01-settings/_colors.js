@@ -55,11 +55,11 @@ const colors = {
   primaryColorExtraDark: "#3f0a01",
   primaryColorLight: "#fd5d41",
   primaryColorExtraLight: "#fec9c0",
-  secondaryColor: "#21a5ff",
-  secondaryColorDark: "#0072bf",
+  secondaryColor: "#CD0025",
+  secondaryColorDark: "#CD0025",
   secondaryColorExtraDark: "#002640",
-  secondaryColorLight: "#40b1ff",
-  secondaryColorExtraLight: "#bfe5ff",
+  secondaryColorLight: "#CD0020",
+  secondaryColorExtraLight: "#CD0020",
   // !!!!!!!!!!!
   // LEADERBOARD
   // !!!!!!!!!!!

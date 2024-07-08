@@ -5,7 +5,11 @@ import { type LabelData } from "../../types";
 import styles from "./FormTemplateStyle.js";
 import { colors } from "../../config/styles/01-settings/_colors";
 
-const LabelTemplate = ({ name, required, isDefault }: LabelData): React.JSX.Element => {
+const LabelTemplate = ({
+  name,
+  required,
+  isDefault,
+}: LabelData): React.JSX.Element => {
   const themeContext = useContext(ThemeContext);
 
   const [randomWidth, setRandomWidth] = useState(30);
@@ -15,15 +19,35 @@ const LabelTemplate = ({ name, required, isDefault }: LabelData): React.JSX.Elem
   }, []);
 
   // Conditionally set the backgroundColor of progressBarStyle.line
-  const lineBackgroundColor = isDefault ?? false ? "#21a5ff" : themeContext?.colors?.primary;
+  const lineBackgroundColor =
+    isDefault ?? false ? "#ff2121" : themeContext?.colors?.primary;
 
   return (
     <View style={styles.containerLabel}>
       <View style={{ flexDirection: "row", backgroundColor: "transparent" }}>
-        <Text style={styles.labelText} darkColor={colors.gray300} lightColor={colors.black}>{name}</Text>
-        {required && <Text style={styles.requiredAsterisk} darkColor={colors.primaryColorDark} lightColor={colors.primaryColor}>*</Text>}
+        <Text
+          style={styles.labelText}
+          darkColor={colors.gray300}
+          lightColor={colors.black}
+        >
+          {name}
+        </Text>
+        {required && (
+          <Text
+            style={styles.requiredAsterisk}
+            darkColor={colors.primaryColorDark}
+            lightColor={colors.primaryColor}
+          >
+            *
+          </Text>
+        )}
       </View>
-      <View style={[styles.line, { width: randomWidth, backgroundColor: lineBackgroundColor }]} />
+      <View
+        style={[
+          styles.line,
+          { width: randomWidth, backgroundColor: lineBackgroundColor },
+        ]}
+      />
     </View>
   );
 };
